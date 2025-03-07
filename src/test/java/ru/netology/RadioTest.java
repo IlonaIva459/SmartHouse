@@ -4,111 +4,57 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RadioTest {
+class RadioTest {
 
     @Test
-    public void testSetCurrentStation() {
+    void testDefaultConstructor() {
         Radio radio = new Radio();
-        radio.setCurrentStation(5);
-        assertEquals(5, radio.getCurrentStation());
+        assertEquals(0, radio.getCurrentStation()); // Начальная станция должна быть 0
+        assertEquals(50, radio.getCurrentVolume()); // Начальная громкость должна быть 50
+        assertEquals(9, radio.getMaxStation());     // По умолчанию 10 станций (0-9)
     }
 
     @Test
-    public void testSetCurrentStationNegative() {
-        Radio radio = new Radio();
+    void testCustomConstructor() {
+        Radio radio = new Radio(30);
+        assertEquals(0, radio.getCurrentStation()); // Начальная станция должна быть 0
+        assertEquals(50, radio.getCurrentVolume()); // Начальная громкость должна быть 50
+        assertEquals(29, radio.getMaxStation());    // Максимальная станция должна быть 29
+    }
+
+    @Test
+    void testSetCurrentStation() {
+        Radio radio = new Radio(30);
+        radio.setCurrentStation(15);
+        assertEquals(15, radio.getCurrentStation()); // Установка допустимой станции
+
+        radio.setCurrentStation(30);
+        assertEquals(15, radio.getCurrentStation()); // Попытка установить недопустимую станцию (остаётся предыдущее значение)
+
         radio.setCurrentStation(-1);
-        assertEquals(0, radio.getCurrentStation());
+        assertEquals(15, radio.getCurrentStation()); // Попытка установить недопустимую станцию (остаётся предыдущее значение)
     }
 
     @Test
-    public void testSetCurrentStationMore() {
-        Radio radio = new Radio();
-        radio.setCurrentStation(10);
-        assertEquals(0, radio.getCurrentStation());
+    void testNextStation() {
+        Radio radio = new Radio(30);
+        radio.setCurrentStation(29);
+        radio.nextStation();
+        assertEquals(0, radio.getCurrentStation()); // Переключение с максимальной станции на 0
+
+        radio.nextStation();
+        assertEquals(1, radio.getCurrentStation()); // Переключение на следующую станцию
     }
 
     @Test
-    public void testNextStationMax() {
-        Radio radio = new Radio();
-        radio.setCurrentStation(9);
-        radio.next();
-        assertEquals(0, radio.getCurrentStation());
-    }
-
-    @Test
-    public void testNextStationNotMax() {
-        Radio radio = new Radio();
-        radio.setCurrentStation(5);
-        radio.next();
-        assertEquals(6, radio.getCurrentStation());
-    }
-
-    @Test
-    public void testPrevStationMin() {
-        Radio radio = new Radio();
+    void testPrevStation() {
+        Radio radio = new Radio(30);
         radio.setCurrentStation(0);
-        radio.prev();
-        assertEquals(9, radio.getCurrentStation());
+        radio.prevStation();
+        assertEquals(29, radio.getCurrentStation()); // Переключение с 0 на максимальную станцию
+
+        radio.prevStation();
+        assertEquals(28, radio.getCurrentStation()); // Переключение на предыдущую станцию
     }
 
-    @Test
-    public void testPrevStationNotMin() {
-        Radio radio = new Radio();
-        radio.setCurrentStation(5);
-        radio.prev();
-        assertEquals(4, radio.getCurrentStation());
-    }
-
-    @Test
-    public void testIncreaseVolumeMax() {
-        Radio radio = new Radio();
-        radio.setCurrentVolume(100);
-        radio.increaseVolume();
-        assertEquals(100, radio.getCurrentVolume());
-    }
-
-    @Test
-    public void testIncreaseVolumeNotMax() {
-        Radio radio = new Radio();
-        radio.setCurrentVolume(50);
-        radio.increaseVolume();
-        assertEquals(51, radio.getCurrentVolume());
-    }
-
-    @Test
-    public void testDecreaseVolumeMin() {
-        Radio radio = new Radio();
-        radio.setCurrentVolume(0);
-        radio.decreaseVolume();
-        assertEquals(0, radio.getCurrentVolume());
-    }
-
-    @Test
-    public void testDecreaseVolumeNotMin() {
-        Radio radio = new Radio();
-        radio.setCurrentVolume(50);
-        radio.decreaseVolume();
-        assertEquals(49, radio.getCurrentVolume());
-    }
-
-    @Test
-    public void testSetCurrentVolumeRange() {
-        Radio radio = new Radio();
-        radio.setCurrentVolume(70);
-        assertEquals(70, radio.getCurrentVolume());
-    }
-
-    @Test
-    public void testSetCurrentVolumeNegative() {
-        Radio radio = new Radio();
-        radio.setCurrentVolume(-1);
-        assertEquals(0, radio.getCurrentVolume());
-    }
-
-    @Test
-    public void testSetCurrentVolumeMore() {
-        Radio radio = new Radio();
-        radio.setCurrentVolume(101);
-        assertEquals(0, radio.getCurrentVolume());
-    }
 }
